@@ -1,0 +1,29 @@
+# macOS local metadata
+.DS_Store
+
+# Build outputs
+build/
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Local compiled debug binaries
+*_debug
+
+# Generated reports and temporary run outputs
+report.md
+*.tmp
+*.log
+
+# C tooling caches
+.cache/
+compile_commands.json
+
+# Editor swap/backup files
+*.swp
+*.swo
+*~

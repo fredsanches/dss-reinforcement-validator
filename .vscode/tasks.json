@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile C Professional (Mac)",
+            "type": "shell",
+            "command": "/usr/bin/clang",
+            "args": [
+                "-std=c17",
+                "-g",
+                "${file}",
+                "-o",
+                "${workspaceFolder}/build/${fileBasenameNoExtension}",
+                "-Wall",
+                "-Wextra",
+                "-Wpedantic",
+                "-Wconversion",
+                "-Wshadow",
+                "-O0"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "C: Compile with Sanitizer (Diagnosis)",
+            "type": "shell",
+            "command": "/usr/bin/clang",
+            "args": [
+                "-g",
+                "-fsanitize=address",       // Raio-X de memória
+                "-fno-omit-frame-pointer",  // Melhora o relatório de erro
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}_debug",
+                "-Wall",
+                "-Wextra"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"      // Abre novo terminal para não misturar logs
+            },
+            "problemMatcher": "$gcc"
+        }
+    ]
+}
