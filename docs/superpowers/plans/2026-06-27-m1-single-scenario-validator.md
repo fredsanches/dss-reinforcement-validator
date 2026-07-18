@@ -46,7 +46,7 @@
 - Create: `tests/test_helpers.h`
 - Create: `tests/test_smoke.c`
 
-- [ ] **Step 1: Create a failing smoke test**
+- [ x ] **Step 1: Create a failing smoke test**
 
 Create `tests/test_smoke.c`:
 
@@ -106,13 +106,13 @@ static void assert_string_contains(const char *haystack, const char *needle, con
 #endif
 ```
 
-- [ ] **Step 2: Run test before Makefile exists**
+- [ x ] **Step 2: Run test before Makefile exists**
 
 Run: `make test`
 
 Expected: FAIL because there is no `Makefile`.
 
-- [ ] **Step 3: Add the minimal Makefile**
+- [ x ] **Step 3: Add the minimal Makefile**
 
 Create `Makefile`:
 
@@ -172,13 +172,13 @@ clean:
 	rm -rf $(BUILD_DIR)
 ```
 
-- [ ] **Step 4: Run the smoke test**
+- [ x ] **Step 4: Run the smoke test**
 
 Run: `make build/test_smoke && build/test_smoke`
 
 Expected: PASS with no output.
 
-- [ ] **Step 5: Commit**
+- [ x   ] **Step 5: Commit**
 
 Run:
 
@@ -196,7 +196,7 @@ git commit -m "chore: add build and test harness"
 - Create: `src/model.c`
 - Create: `tests/test_model.c`
 
-- [ ] **Step 1: Write failing dynamic array tests**
+- [ x ] **Step 1: Write failing dynamic array tests**
 
 Create `tests/test_model.c`:
 
@@ -238,7 +238,7 @@ int main(void)
 }
 ```
 
-- [ ] **Step 2: Run the failing model test**
+- [ x ] **Step 2: Run the failing model test**
 
 Run: `make build/test_model`
 
