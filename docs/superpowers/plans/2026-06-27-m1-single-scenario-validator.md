@@ -178,7 +178,7 @@ Run: `make build/test_smoke && build/test_smoke`
 
 Expected: PASS with no output.
 
-- [ x   ] **Step 5: Commit**
+- [ x ] **Step 5: Commit**
 
 Run:
 
@@ -244,7 +244,7 @@ Run: `make build/test_model`
 
 Expected: FAIL because `gridval/model.h` does not exist.
 
-- [ ] **Step 3: Add model declarations**
+- [ x ] **Step 3: Add model declarations**
 
 Create `include/gridval/model.h`:
 
