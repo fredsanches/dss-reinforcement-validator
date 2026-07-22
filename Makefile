@@ -1,56 +1,57 @@
-CC := /usr/bin/clang
+CC := clang
 CFLAGS := -std=c17 -g -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O0
 CPPFLAGS := -Iinclude -Itests
 SANITIZE_FLAGS := -fsanitize=address -fno-omit-frame-pointer
 
 BUILD_DIR := build
-SRC := src/model.c src/config.c src/validation.c src/csv.c src/report.c
+SRC := src/model.c
 APP_SRC := src/main.c
+
+ifeq ($(OS),Windows_NT)
+	EXE := .exe
+	MKDIR_BUILD 	:= if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
+	REMOVE_BUILD 	:= if exist "$(BUILD_DIR)" rmdir /S /Q "$(BUILD_DIR)"
+else
+	EXE :=
+	MKDIR_BUILD		:= mkdir -p "$(BUILD_DIR)"
+	REMOVE_BUILD	:= rm -rf "$(BUILD_DIR)"
+endif
 
 # These create make variables (compiled test executables) and not directories!
 TEST_BINS := \
-	$(BUILD_DIR)/test_smoke \
-	$(BUILD_DIR)/test_model \
-	$(BUILD_DIR)/test_validation \
-	$(BUILD_DIR)/test_config \
-	$(BUILD_DIR)/test_csv \
-	$(BUILD_DIR)/test_report
+	$(BUILD_DIR)/test_smoke$(EXE) \
+	$(BUILD_DIR)/test_model$(EXE)
 
-.PHONY: all test sanitize clean
+.PHONY: all test clean
 
-all: $(BUILD_DIR)/gridval
+all: $(TEST_BINS)
 
 $(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+	$(MKDIR_BUILD)
 
-$(BUILD_DIR)/gridval: $(SRC) $(APP_SRC) | $(BUILD_DIR)
+# `$<` means the first prerequisite
+# -fsyntax-only checks preprocessing, syntax, types, declarations and warnings
+check-%: src/%.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -fsyntax-only $<
+
+$(BUILD_DIR)/gridval$(EXE): $(SRC) $(APP_SRC) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(SRC) $(APP_SRC) -o $@
 
-$(BUILD_DIR)/test_smoke: tests/test_smoke.c | $(BUILD_DIR)
+$(BUILD_DIR)/test_smoke$(EXE): tests/test_smoke.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) tests/test_smoke.c -o $@
 
-$(BUILD_DIR)/test_model: tests/test_model.c src/model.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) tests/test_model.c src/model.c -o $@
-
-$(BUILD_DIR)/test_validation: tests/test_validation.c src/model.c src/validation.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) tests/test_validation.c src/model.c src/validation.c -o $@
-
-$(BUILD_DIR)/test_config: tests/test_config.c src/config.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) tests/test_config.c src/config.c -o $@
-
-$(BUILD_DIR)/test_csv: tests/test_csv.c src/model.c src/csv.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) tests/test_csv.c src/model.c src/csv.c -o $@
-
-$(BUILD_DIR)/test_report: tests/test_report.c src/model.c src/report.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) tests/test_report.c src/model.c src/report.c -o $@
+# Only .c files are passed to clang. Headers are prerequisites and they are not independant implementation files.
+$(BUILD_DIR)/test_model$(EXE): \
+	tests/test_model.c \
+	tests/test_helpers.h \
+	src/model.c \
+	include/gridval/model.h \
+	| $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) tests/test_model.c src/model.c -o $@ 
 
 test: $(TEST_BINS)
-	$(BUILD_DIR)/test_smoke
-	$(BUILD_DIR)/test_model
-	$(BUILD_DIR)/test_validation
-	$(BUILD_DIR)/test_config
-	$(BUILD_DIR)/test_csv
-	$(BUILD_DIR)/test_report
+	$(BUILD_DIR)/test_smoke$(EXE)
+	$(BUILD_DIR)/test_model$(EXE)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	$(REMOVE_BUILD)
